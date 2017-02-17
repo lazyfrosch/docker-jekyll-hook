@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'cgi'
+
+def json_out(args)
+  args[:status] = 200 unless args.key?(:status)
+  args[:success] = false unless args.key?(:success)
+  no_exit = args.key?(:noexit)
+  args.delete(:noexit)
+
+  puts 'Content-Type: application/json'
+  puts "Status: #{args[:status]}"
+  puts
+  puts args.to_json
+  exit unless no_exit
+end
+
+%w(GITHUB_TOKEN REPO_BRANCH).each do |key|
+  unless ENV.key?(key) && !ENV[key].empty?
+    json_out(status: 500, message: "Configuration incomplete #{key}")
+  end
+end
+
+json_out(status: 500, message: 'Invalid input') unless ENV.key?('QUERY_STRING')
+query = CGI::parse(ENV['QUERY_STRING'])
+
+json_out(status: 401, message: 'Unauthorized') unless query.key?('token') && query['token'][-1] == ENV['GITHUB_TOKEN']
+
+begin
+  input = STDIN.read
+  data = JSON.parse(input)
+  branch = Regexp.escape(ENV['REPO_BRANCH'])
+
+  if data['ref'] =~ %r{^refs/heads/#{branch}$}
+    output = %x(/update 2>&1)
+    raise "Update failed:\n#{output}" unless $?.exitstatus == 0
+    STDERR.puts "Update complete:\n#{output}"
+  else
+    STDERR.puts "Got update for #{data['ref']}, ignoring"
+  end
+  json_out(thanks: true)
+rescue StandardError => e
+  json_out(status: 500, message: 'Could not parse input', noexit: true)
+  raise e
+end

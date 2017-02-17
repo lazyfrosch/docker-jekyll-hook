@@ -1,0 +1,9 @@
+---
+jekyll:
+  image: lazyfrosch/jekyll-hook
+  environment:
+    REPO_URL: https://github.com/lazyfrosch/website.git
+    REPO_BRANCH: master
+    GITHUB_TOKEN: magic
+  ports:
+    - 8080:80

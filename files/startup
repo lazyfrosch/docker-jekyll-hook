@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Running initial update"
+/update
+
+echo "Starting fcgiwrap in background"
+/fcgiwrap &
+trap "killall fcgiwrap" EXIT SIGINT
+
+echo "Starting jekyll-watcher"
+/jekyll-watcher &
+trap "killall jekyll" EXIT SIGINT
+
+echo "Starting nginx..."
+nginx -g 'daemon off;'

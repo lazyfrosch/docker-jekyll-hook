@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+
+if [ -z "$REPO_URL" ] || [ -z "$REPO_BRANCH" ]; then
+    echo "Needs environment configuration: REPO_URL REPO_BRANCH" >&2
+    exit 1
+fi
+
+if [ `id -u` -eq 0 ]; then
+    echo "Running $0 as nginx"
+    su -s /bin/sh -c "$0" nginx
+    exit $?
+fi
+
+cd /source
+
+if [ ! -d .git ]; then
+    echo "Cloning git repo from $REPO_URL"
+    git clone "$REPO_URL" -b "$REPO_BRANCH" .
+else
+    echo "Updating repository"
+    # TODO: update url?
+    git fetch >/dev/null
+    git checkout -f "$REPO_BRANCH"
+    git reset --hard origin/"$REPO_BRANCH"
+    git clean -fd
+fi
