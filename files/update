@@ -26,3 +26,8 @@ else
     git reset --hard origin/"$REPO_BRANCH"
     git clean -fd
 fi
+
+if [ -f Gemfile ]; then
+    bundle install || true
+    bundle update
+fi
