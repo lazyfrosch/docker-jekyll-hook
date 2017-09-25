@@ -28,6 +28,6 @@ else
 fi
 
 if [ -f Gemfile ]; then
-    bundle install || true
-    bundle update
+    rm -f Gemfile.lock
+    bundle install --path vendor/bundle
 fi
