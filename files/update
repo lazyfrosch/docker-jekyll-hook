@@ -29,6 +29,10 @@ else
     git clean -fd
 fi
 
+if [ "$1" = "--first" ]; then
+    jekyll build --destination /site
+fi
+
 if [ -f Gemfile ]; then
     rm -f Gemfile.lock
     if [ "${BUNDLE_ENABLED}" = 1 ]; then
