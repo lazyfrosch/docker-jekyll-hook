@@ -1,7 +1,15 @@
 #!/bin/sh
 
-set -ex
+set -eu
 
-chown -R nginx.nginx /site /source
+if [ `stat -c%u /site` -eq 0 ]; then
+    echo "Updating owner of /site"
+    chown nginx.nginx /site
+fi
+
+if [ `stat -c%u /source` -eq 0 ]; then
+    echo "Updating owner of /source"
+    chown nginx.nginx /source
+fi
 
 exec "$@"
