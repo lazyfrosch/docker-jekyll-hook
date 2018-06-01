@@ -1,15 +1,17 @@
-FROM := nginx:alpine
 IMAGE := lazyfrosch/jekyll-hook
+FROM := $(shell grep FROM Dockerfile | cut -d" " -f2)
 
-.PHONY: dep
+all: pull build
 
-build: dep
-	docker build --rm -t $(IMAGE) .
+pull:
+	docker pull "$(IMAGE)" || true
+	docker pull "$(FROM)"
 
-all: build push
-
-dep:
-	docker pull $(FROM)
+build:
+	docker build --tag "$(IMAGE)" .
 
 push:
-	docker push $(IMAGE)
+	docker push "$(IMAGE)"
+
+clean:
+	if (docker inspect --type image "$(IMAGE)" >/dev/null 2>&1); then docker rmi "$(IMAGE)"; fi
