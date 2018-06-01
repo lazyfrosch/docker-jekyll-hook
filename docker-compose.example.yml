@@ -1,6 +1,7 @@
 ---
 jekyll:
   image: lazyfrosch/jekyll-hook
+  build: ./
   environment:
     REPO_URL: https://github.com/lazyfrosch/website.git
     REPO_BRANCH: master
