@@ -2,6 +2,8 @@
 
 set -e
 
+: ${BUNDLE_ENABLED:=0}
+
 if [ -z "$REPO_URL" ] || [ -z "$REPO_BRANCH" ]; then
     echo "Needs environment configuration: REPO_URL REPO_BRANCH" >&2
     exit 1
@@ -29,5 +31,9 @@ fi
 
 if [ -f Gemfile ]; then
     rm -f Gemfile.lock
-    bundle install --path vendor/bundle
+    if [ "${BUNDLE_ENABLED}" = 1 ]; then
+        bundle install --path vendor/bundle
+    else
+        rm -rf vendor/bundle
+    fi
 fi
