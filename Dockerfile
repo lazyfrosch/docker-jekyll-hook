@@ -1,15 +1,23 @@
-FROM nginx:alpine
+FROM ruby:alpine
 
-ENV JEKYLL_VERSION=3.8.5
+COPY Gemfile* /app/
 
-RUN apk update \
- && apk add build-base fcgiwrap git libffi libffi-dev ruby ruby-bundler ruby-dev ruby-json \
- && gem install --clear-sources --no-document --no-rdoc jekyll -v "~> ${JEKYLL_VERSION}" \
- && gem install --clear-sources --no-document --no-rdoc bigdecimal public_suffix \
- && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled \
+# Ruby code
+RUN apk add libxml2 \
+ && apk add -t .deps make patch gcc g++ musl-dev libxml2-dev \
+ && cd /app \
+ && bundle config set no-cache true \
+ && bundle install \
+ && apk del .deps \
  && rm -f /var/cache/apk/*
 
 COPY files/. /
+
+# Other tools
+RUN apk add nginx fcgiwrap git \
+ && mkdir /run/nginx \
+ && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled \
+ && rm -f /var/cache/apk/*
 
 VOLUME /source /site
 
