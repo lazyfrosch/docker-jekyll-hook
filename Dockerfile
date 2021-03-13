@@ -16,7 +16,7 @@ COPY files/. /
 # Other tools
 RUN apk add nginx fcgiwrap git \
  && mkdir /run/nginx \
- && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled \
+ && ( [ ! -e /etc/nginx/conf.d/default.conf ] || mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled ) \
  && rm -f /var/cache/apk/*
 
 VOLUME /source /site
