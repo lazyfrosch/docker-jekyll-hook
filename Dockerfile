@@ -1,5 +1,7 @@
 FROM ruby:2.7.5-alpine
 
+RUN apk upgrade #20220203
+
 COPY Gemfile* /app/
 
 # Ruby code
