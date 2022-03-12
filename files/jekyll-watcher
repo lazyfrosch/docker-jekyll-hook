@@ -2,6 +2,8 @@
 
 set -e
 
+: "${JEKYLL_BUILD_OPTIONS:=}"
+
 if [ `id -u` -eq 0 ]; then
     echo "Running $0 as nginx"
     su -s /bin/sh -c "$0" nginx
@@ -10,4 +12,4 @@ fi
 
 cd /source
 
-jekyll build --incremental --destination /site --watch
+jekyll build --destination /site --watch ${JEKYLL_BUILD_OPTIONS}
