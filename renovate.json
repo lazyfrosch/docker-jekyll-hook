@@ -1,13 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
-  ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["ruby"],
-      "matchManagers": ["dockerfile"],
-      "allowedVersions": "<3"
-    }
+    "local>lazyfrosch/.github:renovate-config"
   ]
 }
