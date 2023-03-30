@@ -1,4 +1,4 @@
-FROM ruby:2.7.7-alpine
+FROM ruby:2.7.8-alpine
 
 RUN apk upgrade # 20220403
 
